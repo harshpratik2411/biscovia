@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Cookie, ShoppingBag, User, ShieldCheck, Star } from 'lucide-react'
 import { gsap } from 'gsap'
@@ -9,7 +9,7 @@ function HomePage() {
   const heroRef = useRef(null)
   const splashRef = useRef(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     gsap.from(heroRef.current, {
       opacity: 0,
       y: 40,
@@ -68,17 +68,17 @@ function HomePage() {
             </div>
           </div>
         </header>
-        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-[#f5e4cf]">
+        <div className="relative z-10 -mt-40 flex h-full flex-col items-center justify-center px-6 text-center text-[#f5e4cf]">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-[#f7d7a3]">
             Biskovia Crumble Studio
           </p>
           <h1 className="mb-4 text-4xl font-semibold leading-tight sm:text-5xl">
             Chocolate Crumble in Motion
           </h1>
-          <p className="mb-6 max-w-md text-sm text-[#fbead0] sm:text-base">
+          {/* <p className="mb-6 max-w-md text-sm text-[#fbead0] sm:text-base">
             A slow, cinematic pour of chocolate and crumble to welcome you into the
             Biskovia cookie world.
-          </p>
+          </p> */}
           <button
             type="button"
             onClick={() => {
@@ -98,28 +98,28 @@ function HomePage() {
       <main className="mx-auto max-w-6xl px-6 pt-24">
         <section
           id="home"
-          className="mt-10 grid gap-0 overflow-hidden rounded-[2.5rem] bg-[#d3a971] md:grid-cols-[1.1fr_0.9fr]"
+          className="mt-10 grid gap-0 overflow-hidden rounded-[2.5rem] bg-[#c5873f] md:grid-cols-[1.1fr_0.9fr]"
         >
-          <div ref={heroRef} className="flex flex-col justify-center gap-6 px-10 py-12">
-            <h1 className="text-4xl font-semibold leading-tight text-[#3d2510] sm:text-5xl">
+          <div  className="flex flex-col justify-center gap-6 px-10 py-12">
+            <h1 className="text-4xl font-semibold leading-tight text-[#fff7ea] sm:text-5xl">
               Craving Cookies?
               <br />
               We&apos;ve Got the Crumble!
             </h1>
-            <p className="max-w-md text-sm text-[#5d3b1a] sm:text-base">
+            <p className="max-w-md text-sm text-[#fbead0] sm:text-base">
               From warm ovens to happy moments! Our cookies are made to crumble just right.
               Sweet, soft and baked with love in every batch.
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <button
                 type="button"
-                className="rounded-full bg-[#3d2510] px-6 py-3 text-sm font-semibold text-[#f5e4cf] shadow-md hover:bg-[#2b180b]"
+                className="rounded-full bg-[#f5e4cf] px-6 py-3 text-sm font-semibold text-[#3d2510] shadow-md hover:bg-[#fff]"
               >
                 Buy Now
               </button>
               <button
                 type="button"
-                className="rounded-full border border-[#3d2510] px-6 py-3 text-sm font-semibold text-[#3d2510] hover:bg-[#f5e4cf]"
+                className="rounded-full border border-[#fbead0] px-6 py-3 text-sm font-semibold text-[#fbead0] hover:bg-[#f5e4cf]/10"
               >
                 See Menu
               </button>
@@ -129,8 +129,8 @@ function HomePage() {
             <div className="absolute inset-y-0 left-0 w-8 bg-[#d3a971]" />
             <div className="flex h-full items-center justify-center">
               <div
-                ref={splashRef}
-                className="relative flex h-64 w-64 items-center justify-center rounded-full bg-[#f5e4cf]"
+             
+                className="relative flex -ml-9 h-60 w-60 items-center justify-center rounded-full bg-[#f5e4cf]"
               >
                 <div className="absolute inset-6 rounded-full bg-gradient-to-br from-[#f7d7a3] to-[#c07b3f]" />
                 <Cookie className="relative h-24 w-24 text-[#3d2510]" />
@@ -142,7 +142,7 @@ function HomePage() {
           </div>
         </section>
 
-        <section
+        {/* <section
           id="menu"
           className="mt-16 rounded-[2rem] bg-[#f5e4cf] px-8 py-12 shadow-[0_18px_40px_rgba(61,37,16,0.18)]"
         >
@@ -201,9 +201,9 @@ function HomePage() {
               </article>
             </div>
           </div>
-        </section>
+        </section> */}
 
-        <section
+        {/* <section
           id="contact"
           className="mt-16 mb-16 grid gap-10 rounded-[2rem] bg-[#f9e7cf] px-8 py-10 md:grid-cols-[1.1fr_0.9fr]"
         >
@@ -241,7 +241,7 @@ function HomePage() {
               <p className="text-xs">Email: hello@biskovia.com</p>
             </div>
           </div>
-        </section>
+        </section> */}
       </main>
     </div>
   )
