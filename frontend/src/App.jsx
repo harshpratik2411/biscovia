@@ -1,31 +1,14 @@
-import { useLayoutEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Cookie, ShoppingBag, User, ShieldCheck, Star } from 'lucide-react'
-import { gsap } from 'gsap'
+import { motion } from 'framer-motion'
 import './App.css'
 import chocolateVideo from './assets/chocolate.mp4'
 import { products } from './data/products'
 
+const MotionHeader = motion.header
+const MotionDiv = motion.div
+
 function HomePage() {
-  const heroRef = useRef(null)
-  const splashRef = useRef(null)
-
-  useLayoutEffect(() => {
-    gsap.from(heroRef.current, {
-      opacity: 0,
-      y: 40,
-      duration: 0.9,
-      ease: 'power3.out',
-    })
-    gsap.from(splashRef.current, {
-      opacity: 0,
-      scale: 0.8,
-      duration: 1,
-      delay: 0.2,
-      ease: 'elastic.out(1, 0.7)',
-    })
-  }, [])
-
   return (
     <div className="min-h-screen bg-[#f5e4cf] text-[#3d2510]">
       <section className="relative h-screen w-full overflow-hidden">
@@ -38,7 +21,12 @@ function HomePage() {
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-black/40" />
-        <header className="fixed inset-x-0 top-0 z-30 bg-gradient-to-b from-black/70 via-black/30 to-transparent">
+        <MotionHeader
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="fixed inset-x-0 top-0 z-30 bg-gradient-to-b from-black/70 via-black/30 to-transparent"
+        >
           <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 text-[#f5e4cf]">
             <div className="flex items-center gap-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f5e4cf] text-[#3d2510]">
@@ -68,18 +56,19 @@ function HomePage() {
               <ShoppingBag className="h-5 w-5" />
             </div>
           </div>
-        </header>
-        <div className="relative z-10 -mt-40 flex h-full flex-col items-center justify-center px-6 text-center text-[#f5e4cf]">
+        </MotionHeader>
+        <MotionDiv
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: 'easeOut' }}
+          className="relative z-10 -mt-40 flex h-full flex-col items-center justify-center px-6 text-center text-[#f5e4cf]"
+        >
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-[#f7d7a3]">
             Biskovia Crumble Studio
           </p>
           <h1 className="mb-4 text-4xl font-semibold leading-tight sm:text-5xl">
             Chocolate Crumble in Motion
           </h1>
-          {/* <p className="mb-6 max-w-md text-sm text-[#fbead0] sm:text-base">
-            A slow, cinematic pour of chocolate and crumble to welcome you into the
-            Biskovia cookie world.
-          </p> */}
           <button
             type="button"
             onClick={() => {
@@ -93,7 +82,7 @@ function HomePage() {
             <Cookie className="h-4 w-4" />
             Enter Biskovia
           </button>
-        </div>
+        </MotionDiv>
       </section>
 
       <main className="mx-auto max-w-6xl px-6 pt-24">
