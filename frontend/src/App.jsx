@@ -4,6 +4,7 @@ import { Cookie, ShoppingBag, User, ShieldCheck, Star } from 'lucide-react'
 import { gsap } from 'gsap'
 import './App.css'
 import chocolateVideo from './assets/chocolate.mp4'
+import { products } from './data/products'
 
 function HomePage() {
   const heroRef = useRef(null)
@@ -100,7 +101,7 @@ function HomePage() {
           id="home"
           className="mt-10 grid gap-0 overflow-hidden rounded-[2.5rem] bg-[#c5873f] md:grid-cols-[1.1fr_0.9fr]"
         >
-          <div  className="flex flex-col justify-center gap-6 px-10 py-12">
+          <div className="flex flex-col justify-center gap-6 px-10 py-12">
             <h1 className="text-4xl font-semibold leading-tight text-[#fff7ea] sm:text-5xl">
               Craving Cookies?
               <br />
@@ -128,10 +129,7 @@ function HomePage() {
           <div className="relative bg-[#3d2510] p-10">
             <div className="absolute inset-y-0 left-0 w-8 bg-[#d3a971]" />
             <div className="flex h-full items-center justify-center">
-              <div
-             
-                className="relative flex -ml-9 h-60 w-60 items-center justify-center rounded-full bg-[#f5e4cf]"
-              >
+              <div className="relative flex -ml-9 h-60 w-60 items-center justify-center rounded-full bg-[#f5e4cf]">
                 <div className="absolute inset-6 rounded-full bg-gradient-to-br from-[#f7d7a3] to-[#c07b3f]" />
                 <Cookie className="relative h-24 w-24 text-[#3d2510]" />
               </div>
@@ -142,106 +140,60 @@ function HomePage() {
           </div>
         </section>
 
-        {/* <section
-          id="menu"
-          className="mt-16 rounded-[2rem] bg-[#f5e4cf] px-8 py-12 shadow-[0_18px_40px_rgba(61,37,16,0.18)]"
-        >
-          <div className="grid gap-10 md:grid-cols-[1fr_1.1fr]">
-            <div className="flex flex-col justify-center gap-4">
-              <h2 className="text-3xl font-semibold text-[#3d2510]">
-                Only the Finest Go Into Our Crumble
-              </h2>
-              <p className="text-sm text-[#5d3b1a]">
-                With real butter, rich chocolate and hand-selected flavours, we focus on quality
-                from the very first step. Each batch is baked fresh using premium ingredients that
-                create that signature crumble and deep, satisfying taste you&apos;ll love.
+        <section className="mt-16 mb-20">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold text-[#3d2510]">Cookie and Biscuit Collection</h2>
+              <p className="mt-1 text-sm text-[#5d3b1a]">
+                Eight handpicked crumble boxes with special launch discounts.
               </p>
             </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              <article className="flex flex-col justify-between rounded-2xl bg-[#3d2510] p-5 text-[#f5e4cf]">
-                <div className="space-y-2">
-                  <p className="flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#f8d9aa]">
-                    <Star className="h-3 w-3" />
-                    Classic
-                  </p>
-                  <h3 className="text-lg font-semibold">Choco Chunk Crumble</h3>
-                  <p className="text-xs text-[#f8d9aa]">
-                    Gooey chocolate pools and golden edges in every bite.
-                  </p>
-                </div>
-                <div className="mt-4 flex items-center justify-between text-sm">
-                  <p className="text-lg font-semibold text-[#f8d9aa]">₹399</p>
-                  <button
-                    type="button"
-                    className="rounded-full bg-[#f5e4cf] px-4 py-2 text-xs font-semibold text-[#3d2510] hover:bg-white"
-                  >
-                    Add to Box
-                  </button>
-                </div>
-              </article>
-              <article className="flex flex-col justify-between rounded-2xl bg-[#f9e7cf] p-5 text-[#3d2510]">
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#c0633a]">
-                    Special
-                  </p>
-                  <h3 className="text-lg font-semibold">Caramel Swirl Delight</h3>
-                  <p className="text-xs text-[#5d3b1a]">
-                    Soft centre cookies loaded with caramel ribbons and sea salt.
-                  </p>
-                </div>
-                <div className="mt-4 flex items-center justify-between text-sm">
-                  <p className="text-lg font-semibold text-[#c0633a]">₹449</p>
-                  <button
-                    type="button"
-                    className="rounded-full border border-[#3d2510] px-4 py-2 text-xs font-semibold text-[#3d2510] hover:bg-[#d3a971]/30"
-                  >
-                    See Details
-                  </button>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section> */}
-
-        {/* <section
-          id="contact"
-          className="mt-16 mb-16 grid gap-10 rounded-[2rem] bg-[#f9e7cf] px-8 py-10 md:grid-cols-[1.1fr_0.9fr]"
-        >
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold text-[#3d2510]">Stay Crumble-Connected</h2>
-            <p className="text-sm text-[#5d3b1a]">
-              Drop your email to be the first to know about new cookie drops, festive boxes and
-              late-night crumb sales.
-            </p>
-            <form
-              className="mt-2 flex flex-col gap-3 sm:flex-row"
-              onSubmit={(event) => {
-                event.preventDefault()
-              }}
+            <Link
+              to="/menu"
+              className="hidden rounded-full bg-[#3d2510] px-4 py-2 text-xs font-semibold text-[#f5e4cf] shadow-md hover:bg-[#2b180b] sm:inline-flex"
             >
-              <input
-                type="email"
-                required
-                placeholder="you@biskovia.com"
-                className="w-full rounded-full border border-[#d3a971] bg-[#f5e4cf] px-4 py-3 text-sm text-[#3d2510] outline-none placeholder:text-[#b38854]"
-              />
-              <button
-                type="submit"
-                className="rounded-full bg-[#3d2510] px-6 py-3 text-sm font-semibold text-[#f5e4cf] hover:bg-[#2b180b]"
-              >
-                Notify Me
-              </button>
-            </form>
+              View full menu
+            </Link>
           </div>
-          <div className="flex items-center justify-center">
-            <div className="rounded-3xl bg-[#d3a971] px-6 py-5 text-sm text-[#3d2510] shadow-md">
-              <p className="font-semibold">Customer Care</p>
-              <p className="mt-1 text-xs">Mon–Sun · 10am – 11pm</p>
-              <p className="mt-3 text-xs">WhatsApp: +91-90000-00000</p>
-              <p className="text-xs">Email: hello@biskovia.com</p>
-            </div>
+
+          <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            {products.map((product) => {
+              const originalPrice = Math.round(product.price / (1 - product.discountPercent / 100))
+              return (
+                <Link
+                  key={product.id}
+                  to={`/products/${product.slug}`}
+                  className="group overflow-hidden rounded-3xl bg-[#f9e7cf] shadow-[0_18px_40px_rgba(61,37,16,0.16)] transition-transform duration-300 hover:-translate-y-1"
+                >
+                  <div className="relative h-40 overflow-hidden">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute left-3 top-3 rounded-full bg-[#3d2510]/90 px-3 py-1 text-[11px] font-semibold text-[#fbead0]">
+                      {product.discountPercent}% OFF
+                    </div>
+                  </div>
+                  <div className="space-y-2 px-4 py-4">
+                    <h3 className="text-sm font-semibold text-[#3d2510]">{product.name}</h3>
+                    <p className="line-clamp-2 text-xs text-[#5d3b1a]">{product.description}</p>
+                    <div className="mt-2 flex items-center justify-between text-xs">
+                      <div>
+                        <p className="text-lg font-semibold text-[#3d2510]">₹{product.price}</p>
+                        <p className="text-[11px] text-[#b38854] line-through">₹{originalPrice}</p>
+                      </div>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-[#f5e4cf] px-3 py-1 text-[11px] font-semibold text-[#3d2510]">
+                        <ShieldCheck className="h-3 w-3" />
+                        Bestseller
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
-        </section> */}
+        </section>
       </main>
     </div>
   )
