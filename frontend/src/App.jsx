@@ -91,19 +91,19 @@ function HomePage() {
           className="mt-10 grid gap-0 overflow-hidden rounded-[2.5rem] bg-[#c5873f] md:grid-cols-[1.1fr_0.9fr]"
         >
           <div className="flex flex-col justify-center gap-6 px-10 py-12">
-            <h1 className="text-4xl font-semibold leading-tight text-[#fff7ea] sm:text-5xl">
+            <h1 className="text-4xl animate-bounce font-semibold leading-tight text-[#fff7ea] sm:text-5xl">
               Craving Cookies?
               <br />
               We&apos;ve Got the Crumble!
             </h1>
-            <p className="max-w-md text-sm text-[#fbead0] sm:text-base">
+            <p className="max-w-md text-sm animate-bounce text-[#fbead0] sm:text-base">
               From warm ovens to happy moments! Our cookies are made to crumble just right.
               Sweet, soft and baked with love in every batch.
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <button
                 type="button"
-                className="rounded-full bg-[#f5e4cf] px-6 py-3 text-sm font-semibold text-[#3d2510] shadow-md hover:bg-[#fff]"
+                className="rounded-full animate-pulse bg-[#f5e4cf] px-6 py-3 text-sm font-semibold text-[#3d2510] shadow-md hover:bg-[#fff]"
               >
                 Buy Now
               </button>
@@ -119,8 +119,8 @@ function HomePage() {
             <div className="absolute inset-y-0 left-0 w-8 bg-[#d3a971]" />
             <div className="flex h-full items-center justify-center">
               <div className="relative flex -ml-9 h-60 w-60 items-center justify-center rounded-full bg-[#f5e4cf]">
-                <div className="absolute inset-6 rounded-full bg-gradient-to-br from-[#f7d7a3] to-[#c07b3f]" />
-                <Cookie className="relative h-24 w-24 text-[#3d2510]" />
+                <div className="absolute inset-6 animate-spin  rounded-full bg-gradient-to-br from-[#f7d7a3] to-[#c07b3f]" />
+                <Cookie className="relative h-24 animate-spin w-24 text-[#3d2510]" />
               </div>
             </div>
             <div className="pointer-events-none absolute right-6 top-1/2 -translate-y-1/2 rotate-90 text-4xl font-semibold tracking-[0.2em] text-[#f5e4cf]">
