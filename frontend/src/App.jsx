@@ -3,6 +3,11 @@ import { Cookie, ShoppingBag, User, ShieldCheck, Star } from 'lucide-react'
 import { motion } from 'framer-motion'
 import './App.css'
 import chocolateVideo from './assets/chocolate.mp4'
+import chocolateVideoSecondary from './assets/chocolate1.mp4'
+import img5 from  './assets/cookies/img5.jpg'
+import img7 from  './assets/cookies/img7.jpg'
+import homeCookie1 from './assets/cookies/img1.jpg'
+import homeCookie2 from './assets/cookies/img2.jpg'
 import { products } from './data/products'
 
 const MotionHeader = motion.header
@@ -103,7 +108,7 @@ function HomePage() {
             <div className="flex flex-wrap items-center gap-4">
               <button
                 type="button"
-                className="rounded-full animate-pulse bg-[#f5e4cf] px-6 py-3 text-sm font-semibold text-[#3d2510] shadow-md hover:bg-[#fff]"
+                className="rounded-full animate-pulse  bg-[#f5e4cf] px-6 py-3 text-sm font-semibold text-[#3d2510] shadow-md hover:bg-[#fff]"
               >
                 Buy Now
               </button>
@@ -183,7 +188,199 @@ function HomePage() {
             })}
           </div>
         </section>
+
+        <section className="mb-16 rounded-[2.5rem] bg-[#f9e7cf] px-8 py-10 shadow-[0_18px_40px_rgba(61,37,16,0.16)]">
+          <div className="grid gap-10 md:grid-cols-[1.1fr_0.9fr]">
+            <div className="space-y-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#c0633a]">
+                Why Biskovia
+              </p>
+              <h2 className="text-2xl font-semibold text-[#3d2510]">
+                Small batch baking for big city cravings
+              </h2>
+              <p className="text-sm text-[#5d3b1a]">
+                Every tray of cookies is baked in micro batches through the day so you never get
+                shelf-stale biscuits. Just warm crumble, molten chocolate and crisp edges that crack
+                in all the right places.
+              </p>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="rounded-2xl bg-[#f5e4cf] px-4 py-4 text-xs text-[#3d2510]">
+                  <p className="flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#c0633a]">
+                    <Star className="h-3 w-3" />
+                    Ingredients
+                  </p>
+                  <p className="mt-2 text-xs">
+                    European butter, couverture chocolate and carefully sourced nuts and fruits.
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-[#f5e4cf] px-4 py-4 text-xs text-[#3d2510]">
+                  <p className="flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#c0633a]">
+                    <ShieldCheck className="h-3 w-3" />
+                    Technique
+                  </p>
+                  <p className="mt-2 text-xs">
+                    Low and slow baking curves tuned for that perfect soft centre crumble.
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-[#f5e4cf] px-4 py-4 text-xs text-[#3d2510]">
+                  <p className="flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#c0633a]">
+                    <Cookie className="h-3 w-3" />
+                    Finish
+                  </p>
+                  <p className="mt-2 text-xs">
+                    Each box is hand-finished with crumble dusting and a tasting note card.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center justify-center">
+              <div className="relative w-full max-w-sm">
+                <div className="grid gap-3">
+                  <div className="relative h-40 overflow-hidden rounded-3xl">
+                    <img
+                      src={img5}
+                      alt="Fresh cookie tray"
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute left-3 top-3 rounded-full bg-[#3d2510]/85 px-3 py-1 text-[11px] font-semibold text-[#fbead0]">
+                      Fresh out of the oven
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="relative h-28 overflow-hidden rounded-3xl">
+                      <img
+                        src={homeCookie1}
+                        alt="Cookie closeup"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="relative h-28 overflow-hidden rounded-3xl">
+                      <img
+                        src={homeCookie2}
+                        alt="Biscuit stack"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="mb-16 grid gap-10 rounded-[2.5rem] bg-[#3d2510] px-8 py-10 text-[#f5e4cf] md:grid-cols-[1.1fr_0.9fr]">
+          <div className="space-y-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#f7d7a3]">
+              Crumble stories
+            </p>
+            <h2 className="text-2xl font-semibold">What city cookie lovers are saying</h2>
+            <p className="text-sm text-[#fbead0]">
+              Late night projects, weekend binges, coffee catch-ups or solo movie marathons. Biskovia
+              boxes have quietly become the cookie of choice across town.
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-2xl bg-[#2b180b] px-5 py-4 text-xs text-[#fbead0]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#f7d7a3]">
+                  4.9 average rating
+                </p>
+                <p className="mt-2">
+                  Super soft centre with just enough edge crunch. Tastes like a cookie bar dessert but
+                  in a box.
+                </p>
+                <p className="mt-3 text-[11px] text-[#f7d7a3]">– Ananya, midnight snacker</p>
+              </div>
+              <div className="rounded-2xl bg-[#2b180b] px-5 py-4 text-xs text-[#fbead0]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#f7d7a3]">
+                  Office favourite
+                </p>
+                <p className="mt-2">
+                  We order the assorted box every Friday. There are never any leftovers. Only crumbs.
+                </p>
+                <p className="mt-3 text-[11px] text-[#f7d7a3]">– Rohit, team lead</p>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center justify-center">
+            <div className="relative w-full max-w-sm overflow-hidden rounded-[1rem] bg-[#2b180b]">
+              <img
+                src={img7}
+                alt="Cookie box illustration"
+                className="absolute inset-0 h-full w-full object-cover opacity-80"
+              />
+              <div className="relative px-6 py-6 text-xs text-[#fbead0]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#f7d7a3]">
+                  Pairing notes
+                </p>
+                <ul className="mt-3 space-y-2">
+                  <li>• Choco Chip Crumble with a flat white or cold brew.</li>
+                  <li>• Red Velvet Swish with vanilla milk or hot chocolate.</li>
+                  <li>• Espresso Crunch Disc with a double shot espresso.</li>
+                </ul>
+                <p className="mt-4 text-[11px]">
+                  Turn your cookie box into a mini dessert tasting session at home.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        {/* <section className="mb-24 grid gap-10 rounded-[2.5rem] bg-[#fef3e0] px-8 py-10 md:grid-cols-[1.1fr_0.9fr]">
+          <div className="space-y-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#c0633a]">
+              Stay crumble-connected
+            </p>
+            <h2 className="text-2xl font-semibold text-[#3d2510]">Be first in line for new drops</h2>
+            <p className="text-sm text-[#5d3b1a]">
+              Limited edition festival boxes, midnight cookie drops and seasonal flavours disappear in
+              hours. Add your email to get early access links before social media sees them.
+            </p>
+            <form
+              className="mt-2 flex flex-col gap-3 sm:flex-row"
+              onSubmit={(event) => {
+                event.preventDefault()
+              }}
+            >
+              <input
+                type="email"
+                required
+                placeholder="you@biskovia.com"
+                className="w-full rounded-full border border-[#d3a971] bg-[#f5e4cf] px-4 py-3 text-sm text-[#3d2510] outline-none placeholder:text-[#b38854]"
+              />
+              <button
+                type="submit"
+                className="rounded-full bg-[#3d2510] px-6 py-3 text-sm font-semibold text-[#f5e4cf] hover:bg-[#2b180b]"
+              >
+                Get early access
+              </button>
+            </form>
+          </div>
+          <div className="flex items-center justify-center">
+            <div className="relative w-full max-w-sm overflow-hidden rounded-3xl bg-[#d3a971] shadow-md">
+              <img
+                src={cookiePack2}
+                alt="Studio cookie counter"
+                className="absolute inset-0 h-full w-full object-cover opacity-60"
+              />
+              <div className="relative px-6 py-5 text-sm text-[#3d2510]">
+                <p className="font-semibold">Visit the crumble studio</p>
+                <p className="mt-1 text-xs">Open daily · 11am – 11pm</p>
+                <p className="mt-3 text-xs">Biskovia Crumble Studio, High Street, Bengaluru</p>
+                <p className="mt-1 text-xs">WhatsApp: +91-90000-00000</p>
+                <p className="text-xs">Email: hello@biskovia.com</p>
+              </div>
+            </div>
+          </div>
+        </section> */}
       </main>
+      <section className="w-full overflow-hidden bg-black">
+        <video
+          src={chocolateVideoSecondary}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="h-64 w-full object-cover  sm:h-80 md:h-[40rem]"
+        />
+      </section>
     </div>
   )
 }
