@@ -13,9 +13,10 @@ function AddProductPage() {
     description: '',
     price: '',
     category: '',
-    image_url: '',
     stock_quantity: 0
   })
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -37,6 +38,18 @@ function AddProductPage() {
     }))
   }
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setImageFile(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   const handleStockChange = (increment) => {
     setFormData(prev => ({
       ...prev,
@@ -51,16 +64,19 @@ function AddProductPage() {
     setSuccess('')
 
     try {
+      const data = new FormData()
+      data.append('name', formData.name)
+      data.append('description', formData.description)
+      data.append('price', formData.price)
+      data.append('category', formData.category)
+      data.append('stock_quantity', formData.stock_quantity)
+      if (imageFile) {
+        data.append('image', imageFile)
+      }
+
       const response = await fetch('http://localhost:5001/api/products', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          price: parseFloat(formData.price),
-          stock_quantity: parseInt(formData.stock_quantity)
-        })
+        body: data
       })
 
       if (!response.ok) {
@@ -68,7 +84,7 @@ function AddProductPage() {
         throw new Error(errorData.message || 'Failed to create product')
       }
 
-      const data = await response.json()
+      const responseData = await response.json()
       setSuccess('Product created successfully!')
       
       // Reset form after 2 seconds
@@ -78,9 +94,10 @@ function AddProductPage() {
           description: '',
           price: '',
           category: '',
-          image_url: '',
           stock_quantity: 0
         })
+        setImageFile(null)
+        setImagePreview(null)
         setSuccess('')
         navigate('/admin')
       }, 2000)
@@ -217,19 +234,37 @@ function AddProductPage() {
                 </div>
               </div>
 
-              {/* Image URL */}
+              {/* Image Upload */}
               <div>
                 <label className="block text-sm font-semibold text-[#3d2510] mb-2">
-                  Image URL
+                  Product Image *
                 </label>
-                <input
-                  type="url"
-                  name="image_url"
-                  value={formData.image_url}
-                  onChange={handleChange}
-                  className="w-full rounded-2xl border border-[#d3a971] bg-[#f5e4cf] px-4 py-3 text-[#3d2510] outline-none focus:border-[#c0633a] placeholder:text-[#b38854]"
-                  placeholder="https://example.com/image.jpg"
-                />
+                <div className="flex items-center gap-4">
+                  <div className="relative h-24 w-24 overflow-hidden rounded-2xl border-2 border-dashed border-[#d3a971] bg-[#f5e4cf]">
+                    {imagePreview ? (
+                      <img src={imagePreview} alt="Preview" className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-[#b38854]">
+                        <Plus className="h-8 w-8" />
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="absolute inset-0 cursor-pointer opacity-0"
+                      required
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-[#3d2510]">
+                      {imageFile ? imageFile.name : 'Choose an image'}
+                    </p>
+                    <p className="text-xs text-[#b38854]">
+                      PNG, JPG or GIF (max. 2MB)
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* Stock Quantity */}

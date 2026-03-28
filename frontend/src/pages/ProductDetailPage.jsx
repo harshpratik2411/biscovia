@@ -1,7 +1,7 @@
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Cookie, ShoppingBag, ShieldCheck, Star } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { products } from '../data/products'
 
 const MotionHeader = motion.header
 const MotionSection = motion.section
@@ -11,7 +11,43 @@ const MotionButton = motion.button
 function ProductDetailPage() {
   const { slug } = useParams()
   const navigate = useNavigate()
-  const product = products.find((item) => item.slug === slug)
+  const [product, setProduct] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchProduct()
+  }, [slug])
+
+  const fetchProduct = async () => {
+    try {
+      const response = await fetch('http://localhost:5001/api/products')
+      const products = await response.json()
+      // Find by slug or name-based slug
+      const foundProduct = products.find((item) => {
+        const itemSlug = item.slug || item.name.toLowerCase().replace(/\s+/g, '-')
+        return itemSlug === slug
+      })
+      setProduct(foundProduct)
+    } catch (error) {
+      console.error('Error fetching product:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return 'https://via.placeholder.com/600'
+    if (imagePath.startsWith('http')) return imagePath
+    return `http://localhost:5001/uploads/${imagePath}`
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#f5e4cf] text-[#3d2510]">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#3d2510] border-t-transparent"></div>
+      </div>
+    )
+  }
 
   if (!product) {
     return (
@@ -21,7 +57,8 @@ function ProductDetailPage() {
     )
   }
 
-  const originalPrice = Math.round(product.price / (1 - product.discountPercent / 100))
+  const discount = product.discountPercent || 0
+  const originalPrice = discount > 0 ? Math.round(product.price / (1 - discount / 100)) : product.price
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f5e4cf] via-[#f7e0c0] to-[#e7c090] text-[#3d2510]">
@@ -66,13 +103,13 @@ function ProductDetailPage() {
               className="relative h-80 overflow-hidden rounded-[2rem] border border-[#e0c8a3]"
             >
               <img
-                src={product.image}
+                src={getImageUrl(product.image_url)}
                 alt={product.name}
                 className="h-full w-full object-cover"
               />
               <div className="absolute left-4 top-4 flex items-center gap-1 rounded-full bg-[#3d2510]/90 px-4 py-1 text-xs font-semibold text-[#fbead0]">
                 <Star className="h-3 w-3 text-[#f7d7a3]" />
-                <span>{product.discountPercent}% launch discount</span>
+                <span>{discount}% launch discount</span>
               </div>
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/40 to-transparent px-6 pb-4 pt-10 text-xs text-[#fbead0]">
                 Small-batch baked, photographed from your actual Biskovia cookie tray.

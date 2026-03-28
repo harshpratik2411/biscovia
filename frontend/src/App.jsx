@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import { Cookie, ShoppingBag, User, ShieldCheck, Star } from 'lucide-react'
 import { motion } from 'framer-motion'
 import './App.css'
@@ -8,12 +9,36 @@ import img5 from  './assets/cookies/img5.jpg'
 import img7 from  './assets/cookies/img7.jpg'
 import homeCookie1 from './assets/cookies/img1.jpg'
 import homeCookie2 from './assets/cookies/img2.jpg'
-import { products } from './data/products'
 
 const MotionHeader = motion.header
 const MotionDiv = motion.div
 
 function HomePage() {
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('http://localhost:5001/api/products')
+      const data = await response.json()
+      setProducts(data)
+    } catch (error) {
+      console.error('Error fetching products:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return 'https://via.placeholder.com/300'
+    if (imagePath.startsWith('http')) return imagePath
+    return `http://localhost:5001/uploads/${imagePath}`
+  }
+
   return (
     <div className="min-h-screen bg-[#f5e4cf] text-[#3d2510]">
       <section className="relative h-screen w-full overflow-hidden">
@@ -151,41 +176,59 @@ function HomePage() {
           </div>
 
           <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-            {products.map((product) => {
-              const originalPrice = Math.round(product.price / (1 - product.discountPercent / 100))
-              return (
-                <Link
-                  key={product.id}
-                  to={`/products/${product.slug}`}
-                  className="group overflow-hidden rounded-3xl bg-[#f9e7cf] shadow-[0_18px_40px_rgba(61,37,16,0.16)] transition-transform duration-300 hover:-translate-y-1"
-                >
-                  <div className="relative h-40 overflow-hidden">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute left-3 top-3 rounded-full bg-[#3d2510]/90 px-3 py-1 text-[11px] font-semibold text-[#fbead0]">
-                      {product.discountPercent}% OFF
+            {loading ? (
+              <div className="col-span-full py-20 text-center">
+                <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-[#3d2510] border-t-transparent"></div>
+                <p className="mt-4 text-[#3d2510]">Loading our freshest cookies...</p>
+              </div>
+            ) : products.length === 0 ? (
+              <div className="col-span-full py-20 text-center text-[#3d2510]">
+                No cookies available at the moment.
+              </div>
+            ) : (
+              products.map((product) => {
+                const discount = product.discountPercent || 0
+                const originalPrice = discount > 0 ? Math.round(product.price / (1 - discount / 100)) : product.price
+                const slug = product.slug || product.name.toLowerCase().replace(/\s+/g, '-')
+                
+                return (
+                  <Link
+                    key={product.id}
+                    to={`/products/${slug}`}
+                    className="group overflow-hidden rounded-3xl bg-[#f9e7cf] shadow-[0_18px_40px_rgba(61,37,16,0.16)] transition-transform duration-300 hover:-translate-y-1"
+                  >
+                    <div className="relative h-40 overflow-hidden">
+                      <img
+                        src={getImageUrl(product.image_url)}
+                        alt={product.name}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      {discount > 0 && (
+                        <div className="absolute left-3 top-3 rounded-full bg-[#3d2510]/90 px-3 py-1 text-[11px] font-semibold text-[#fbead0]">
+                          {discount}% OFF
+                        </div>
+                      )}
                     </div>
-                  </div>
-                  <div className="space-y-2 px-4 py-4">
-                    <h3 className="text-sm font-semibold text-[#3d2510]">{product.name}</h3>
-                    <p className="line-clamp-2 text-xs text-[#5d3b1a]">{product.description}</p>
-                    <div className="mt-2 flex items-center justify-between text-xs">
-                      <div>
-                        <p className="text-lg font-semibold text-[#3d2510]">₹{product.price}</p>
-                        <p className="text-[11px] text-[#b38854] line-through">₹{originalPrice}</p>
+                    <div className="space-y-2 px-4 py-4">
+                      <h3 className="text-sm font-semibold text-[#3d2510]">{product.name}</h3>
+                      <p className="line-clamp-2 text-xs text-[#5d3b1a]">{product.description}</p>
+                      <div className="mt-2 flex items-center justify-between text-xs">
+                        <div>
+                          <p className="text-lg font-semibold text-[#3d2510]">₹{product.price}</p>
+                          {discount > 0 && (
+                            <p className="text-[11px] text-[#b38854] line-through">₹{originalPrice}</p>
+                          )}
+                        </div>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-[#f5e4cf] px-3 py-1 text-[11px] font-semibold text-[#3d2510]">
+                          <ShieldCheck className="h-3 w-3" />
+                          Bestseller
+                        </span>
                       </div>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-[#f5e4cf] px-3 py-1 text-[11px] font-semibold text-[#3d2510]">
-                        <ShieldCheck className="h-3 w-3" />
-                        Bestseller
-                      </span>
                     </div>
-                  </div>
-                </Link>
-              )
-            })}
+                  </Link>
+                )
+              })
+            )}
           </div>
         </section>
 

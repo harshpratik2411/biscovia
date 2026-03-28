@@ -103,6 +103,12 @@ function AdminPage() {
       alert('Failed to delete contact')
     }
   }
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return 'https://via.placeholder.com/100'
+    if (imagePath.startsWith('http')) return imagePath
+    return `http://localhost:5001/uploads/${imagePath}`
+  }
+
   return (
     <div className="min-h-screen bg-[#3d2510] text-[#f5e4cf]">
       <header className="border-b border-[#f5e4cf]/20 bg-[#2b180b]">
@@ -253,6 +259,7 @@ function AdminPage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-[#f5e4cf]/20">
+                        <th className="px-4 py-3 text-left font-semibold">Image</th>
                         <th className="px-4 py-3 text-left font-semibold">Name</th>
                         <th className="px-4 py-3 text-left font-semibold">Price</th>
                         <th className="px-4 py-3 text-left font-semibold">Category</th>
@@ -263,6 +270,13 @@ function AdminPage() {
                     <tbody>
                       {products.map((product) => (
                         <tr key={product.id} className="border-b border-[#f5e4cf]/10">
+                          <td className="px-4 py-3">
+                            <img 
+                              src={getImageUrl(product.image_url)} 
+                              alt={product.name} 
+                              className="h-10 w-10 rounded-lg object-cover"
+                            />
+                          </td>
                           <td className="px-4 py-3">{product.name}</td>
                           <td className="px-4 py-3">₹{product.price}</td>
                           <td className="px-4 py-3">{product.category || '-'}</td>

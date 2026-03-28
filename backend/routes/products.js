@@ -1,13 +1,27 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
 const { pool } = require('../server');
+
+// Configure multer for file storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
 
 // Mock data for testing
 const mockProducts = [
-  { id: 1, name: 'Chocolate Chip Cookie', description: 'Delicious chocolate chip cookies with premium ingredients', price: 299.99, category: 'Cookies', stock_quantity: 50, created_at: new Date().toISOString() },
-  { id: 2, name: 'Oatmeal Raisin', description: 'Healthy oatmeal raisin cookies', price: 249.99, category: 'Cookies', stock_quantity: 30, created_at: new Date().toISOString() },
-  { id: 3, name: 'Double Chocolate Fudge', description: 'Rich double chocolate fudge cookies', price: 349.99, category: 'Cookies', stock_quantity: 25, created_at: new Date().toISOString() }
+  { id: 1, name: 'Choco Chip Crumble', description: 'Soft centre cookie loaded with molten chocolate chips and golden crumble edges.', price: 399, category: 'Cookies', stock_quantity: 50, image_url: 'img1.jpg', created_at: new Date().toISOString() },
+  { id: 2, name: 'Red Velvet Swish', description: 'Red velvet cookie with cream cheese chips and a rich cocoa crumble.', price: 449, category: 'Cookies', stock_quantity: 30, image_url: 'img2.jpg', created_at: new Date().toISOString() },
+  { id: 3, name: 'Caramel Drizzle Stack', description: 'Thick cookie stack drenched in salted caramel ribbons and crunchy bits.', price: 499, category: 'Cookies', stock_quantity: 25, image_url: 'img3.jpg', created_at: new Date().toISOString() }
 ];
 
 let nextId = 4;
@@ -52,7 +66,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create new product
-router.post('/', [
+router.post('/', upload.single('image'), [
   body('name').notEmpty().withMessage('Product name is required'),
   body('price').isFloat({ min: 0 }).withMessage('Price must be a positive number'),
   body('description').optional().isString(),
@@ -65,7 +79,8 @@ router.post('/', [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, description, price, category, image_url, stock_quantity } = req.body;
+    const { name, description, price, category, stock_quantity } = req.body;
+    const image_url = req.file ? req.file.filename : null;
     
     if (!pool) {
       // Use mock data
@@ -88,7 +103,7 @@ router.post('/', [
     
     const [result] = await pool.execute(
       'INSERT INTO products (name, description, price, category, image_url, stock_quantity) VALUES (?, ?, ?, ?, ?, ?)',
-      [name, description, price, category, image_url || null, stock_quantity || 0]
+      [name, description, price, category, image_url, stock_quantity || 0]
     );
     
     res.status(201).json({ 
