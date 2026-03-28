@@ -9,6 +9,7 @@ import AboutPage from './pages/AboutPage.jsx'
 import ContactPage from './pages/ContactPage.jsx'
 import ProductDetailPage from './pages/ProductDetailPage.jsx'
 import BookingPage from './pages/BookingPage.jsx'
+import AddProductPage from './pages/AddProductPage.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -21,6 +22,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/products/:slug" element={<ProductDetailPage />} />
         <Route path="/booking" element={<BookingPage />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin/add-product" element={<AddProductPage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

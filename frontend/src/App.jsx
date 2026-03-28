@@ -71,7 +71,7 @@ function HomePage() {
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-[#f7d7a3]">
             Biskovia Crumble Studio
           </p>
-          <h1 className="mb-4 text-4xl font-semibold leading-tight sm:text-5xl">
+          <h1 className="mb-4 text-4xl font-semibold leading-tight  sm:text-5xl">
             Chocolate Crumble in Motion
           </h1>
           <button

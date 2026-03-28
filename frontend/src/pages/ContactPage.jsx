@@ -1,6 +1,65 @@
+import { useState } from 'react'
 import { Cookie } from 'lucide-react'
 
 function ContactPage() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  })
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState('')
+  const [error, setError] = useState('')
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      const response = await fetch('http://localhost:5001/api/contacts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to submit contact form')
+      }
+
+      const data = await response.json()
+      setSuccess('Message sent successfully! We will get back to you soon.')
+      
+      // Reset form after 2 seconds
+      setTimeout(() => {
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        })
+        setSuccess('')
+      }, 2000)
+
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
   return (
     <div className="min-h-screen bg-[#f5e4cf] text-[#3d2510]">
       <header className="border-b border-[#e0c8a3] bg-[#d3a971]">
@@ -33,10 +92,22 @@ function ContactPage() {
             </p>
             <form
               className="mt-2 space-y-3"
-              onSubmit={(event) => {
-                event.preventDefault()
-              }}
+              onSubmit={handleSubmit}
             >
+              {/* Success Message */}
+              {success && (
+                <div className="rounded-2xl bg-green-100 border border-green-300 p-4 text-green-800">
+                  <p className="font-semibold">{success}</p>
+                </div>
+              )}
+
+              {/* Error Message */}
+              {error && (
+                <div className="rounded-2xl bg-red-100 border border-red-300 p-4 text-red-800">
+                  <p className="font-semibold">{error}</p>
+                </div>
+              )}
+
               <div className="space-y-1 text-xs">
                 <label htmlFor="name" className="font-semibold text-[#3d2510]">
                   Name
@@ -44,6 +115,8 @@ function ContactPage() {
                 <input
                   id="name"
                   name="name"
+                  value={formData.name}
+                  onChange={handleChange}
                   required
                   className="w-full rounded-full border border-[#d3a971] bg-[#f5e4cf] px-4 py-2.5 text-sm text-[#3d2510] outline-none placeholder:text-[#b38854]"
                   placeholder="Cookie lover"
@@ -57,9 +130,25 @@ function ContactPage() {
                   id="email"
                   name="email"
                   type="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   required
                   className="w-full rounded-full border border-[#d3a971] bg-[#f5e4cf] px-4 py-2.5 text-sm text-[#3d2510] outline-none placeholder:text-[#b38854]"
                   placeholder="you@biskovia.com"
+                />
+              </div>
+              <div className="space-y-1 text-xs">
+                <label htmlFor="subject" className="font-semibold text-[#3d2510]">
+                  Subject
+                </label>
+                <input
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                  className="w-full rounded-full border border-[#d3a971] bg-[#f5e4cf] px-4 py-2.5 text-sm text-[#3d2510] outline-none placeholder:text-[#b38854]"
+                  placeholder="What's this about?"
                 />
               </div>
               <div className="space-y-1 text-xs">
@@ -69,6 +158,8 @@ function ContactPage() {
                 <textarea
                   id="message"
                   name="message"
+                  value={formData.message}
+                  onChange={handleChange}
                   rows={4}
                   required
                   className="w-full rounded-2xl border border-[#d3a971] bg-[#f5e4cf] px-4 py-2.5 text-sm text-[#3d2510] outline-none placeholder:text-[#b38854]"
@@ -77,9 +168,10 @@ function ContactPage() {
               </div>
               <button
                 type="submit"
-                className="mt-2 rounded-full bg-[#3d2510] px-6 py-3 text-sm font-semibold text-[#f5e4cf] hover:bg-[#2b180b]"
+                disabled={loading}
+                className="mt-2 rounded-full bg-[#3d2510] px-6 py-3 text-sm font-semibold text-[#f5e4cf] hover:bg-[#2b180b] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Send Message
+                {loading ? 'Sending...' : 'Send Message'}
               </button>
             </form>
           </div>
