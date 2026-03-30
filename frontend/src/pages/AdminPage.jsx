@@ -52,11 +52,16 @@ function AdminPage() {
         }),
       })
 
+      const data = await response.json()
       if (response.ok) {
-        const data = await response.json()
+        if (data.user.role !== 'admin') {
+          alert('Access denied. Admin only.')
+          return
+        }
+        localStorage.setItem('adminToken', data.token)
         setIsLoggedIn(true)
       } else {
-        alert('Login failed')
+        alert(data.message || 'Login failed')
       }
     } catch (error) {
       console.error('Login error:', error)
@@ -64,6 +69,16 @@ function AdminPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('adminToken')
+    if (token) setIsLoggedIn(true)
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken')
+    setIsLoggedIn(false)
   }
 
   const handleDeleteProduct = async (productId) => {
@@ -133,7 +148,7 @@ function AdminPage() {
               </Link>
             )}
             <button
-              onClick={() => setIsLoggedIn(false)}
+              onClick={isLoggedIn ? handleLogout : () => window.location.href = '/'}
               className="text-xs font-semibold text-[#f5e4cf] underline underline-offset-4 hover:text-[#f7d7a3]"
             >
               {isLoggedIn ? 'Logout' : 'Back to site'}
@@ -144,65 +159,48 @@ function AdminPage() {
 
       <main className="mx-auto max-w-6xl px-6 py-10">
         {!isLoggedIn ? (
-          <section className="grid gap-8 md:grid-cols-[0.9fr_1.1fr]">
-            <div className="space-y-5 rounded-2xl bg-[#2b180b] p-6 shadow-[0_20px_45px_rgba(0,0,0,0.55)]">
-              <h1 className="text-xl font-semibold">Admin Sign In</h1>
-              <p className="text-xs text-[#f5e4cf]/80">
-                Login with your admin credentials to manage cookie flavours, prices and active drops.
-              </p>
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-1">
-                  <label htmlFor="email" className="text-xs font-semibold">
-                    Email
-                  </label>
+          <div className="flex flex-col items-center justify-center min-h-[70vh]">
+            <div className="w-full max-w-md bg-[#2b180b] rounded-[2.5rem] p-10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] border border-[#f5e4cf]/10">
+              <div className="text-center mb-10">
+                <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-[#f5e4cf] text-[#3d2510] mb-6 shadow-xl">
+                  <ShieldCheck className="h-10 w-10" />
+                </div>
+                <h1 className="text-2xl font-bold tracking-tight text-[#f5e4cf]">Admin Dashboard</h1>
+                <p className="text-[#f5e4cf]/60 text-sm mt-2 font-medium uppercase tracking-[0.1em]">Internal Access Only</p>
+              </div>
+
+              <form onSubmit={handleLogin} className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-[#f5e4cf]/80 ml-1 uppercase tracking-wider">Email</label>
                   <input
-                    id="email"
                     name="email"
                     type="email"
                     required
-                    className="w-full rounded-lg border border-[#f5e4cf]/20 bg-[#3d2510] px-3 py-2 text-sm text-[#f5e4cf] outline-none placeholder:text-[#d3a971] focus:border-[#f7d7a3]"
+                    className="w-full bg-[#3d2510] border border-[#f5e4cf]/10 rounded-2xl py-4 px-5 text-sm text-[#f5e4cf] focus:outline-none focus:border-[#f5e4cf]/40 transition-all placeholder:text-[#f5e4cf]/20"
                     placeholder="admin@biskovia.com"
                   />
                 </div>
-                <div className="space-y-1">
-                  <label htmlFor="password" className="text-xs font-semibold">
-                    Password
-                  </label>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-[#f5e4cf]/80 ml-1 uppercase tracking-wider">Password</label>
                   <input
-                    id="password"
                     name="password"
                     type="password"
                     required
-                    className="w-full rounded-lg border border-[#f5e4cf]/20 bg-[#3d2510] px-3 py-2 text-sm text-[#f5e4cf] outline-none placeholder:text-[#d3a971] focus:border-[#f7d7a3]"
-                    placeholder="Enter password"
+                    className="w-full bg-[#3d2510] border border-[#f5e4cf]/10 rounded-2xl py-4 px-5 text-sm text-[#f5e4cf] focus:outline-none focus:border-[#f5e4cf]/40 transition-all placeholder:text-[#f5e4cf]/20"
+                    placeholder="••••••••"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#f5e4cf] px-4 py-2.5 text-sm font-semibold text-[#3d2510] hover:bg-white disabled:opacity-50"
+                  className="w-full bg-[#f5e4cf] text-[#3d2510] rounded-2xl py-4 font-bold text-sm shadow-2xl shadow-black/40 hover:bg-white active:scale-[0.98] transition-all flex items-center justify-center gap-3 mt-8"
                 >
-                  <ShieldCheck className="h-4 w-4" />
-                  {loading ? 'Logging in...' : 'Login to Dashboard'}
+                  <ShieldCheck className="h-5 w-5" />
+                  {loading ? 'Authenticating...' : 'Login to Dashboard'}
                 </button>
               </form>
             </div>
-
-            <div className="space-y-4 rounded-2xl bg-[#3d2510] p-6">
-              <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-[#f7d7a3]">
-                Oven Control Panel
-              </h2>
-              <p className="text-xs text-[#f5e4cf]/85">
-                Once logged in, you&apos;ll be able to:
-              </p>
-              <ul className="mt-2 list-disc space-y-1 text-xs text-[#f5e4cf]/85 pl-4">
-                <li>Manage products with full CRUD operations.</li>
-                <li>View and manage user accounts.</li>
-                <li>Handle contact form submissions.</li>
-                <li>Add new products to the catalog.</li>
-              </ul>
-            </div>
-          </section>
+          </div>
         ) : (
           <div className="space-y-6">
             {/* Tab Navigation */}

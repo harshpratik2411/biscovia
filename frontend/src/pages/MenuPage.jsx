@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Cookie, ShoppingBag, Star } from 'lucide-react'
+import { Cookie, ShoppingBag, Star, Plus } from 'lucide-react'
+import { useCart } from '../context/CartContext'
 
 function MenuPage() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const { addToCart } = useCart()
 
   useEffect(() => {
     fetchProducts()
@@ -105,9 +107,10 @@ function MenuPage() {
                       <button
                         type="button"
                         disabled={item.stock_quantity <= 0}
+                        onClick={() => addToCart(item)}
                         className="inline-flex items-center gap-2 rounded-full bg-[#3d2510] px-4 py-2 text-xs font-semibold text-[#f5e4cf] hover:bg-[#2b180b] disabled:opacity-50"
                       >
-                        <ShoppingBag className="h-4 w-4" />
+                        <Plus className="h-4 w-4" />
                         Add to Box
                       </button>
                     </div>

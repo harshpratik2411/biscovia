@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Cookie, ShoppingBag, ShieldCheck, Star } from 'lucide-react'
+import { Cookie, ShoppingBag, ShieldCheck, Star, Plus } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { useCart } from '../context/CartContext'
 
 const MotionHeader = motion.header
 const MotionSection = motion.section
@@ -13,6 +14,7 @@ function ProductDetailPage() {
   const navigate = useNavigate()
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
+  const { addToCart } = useCart()
 
   useEffect(() => {
     fetchProduct()
@@ -173,17 +175,14 @@ function ProductDetailPage() {
               <MotionButton
                 whileTap={{ scale: 0.97 }}
                 type="button"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#f5e4cf] px-5 py-3 text-sm font-semibold text-[#3d2510] hover:bg-white"
-                onClick={() =>
-                  navigate('/booking', {
-                    state: {
-                      productSlug: product.slug,
-                    },
-                  })
-                }
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#f5e4cf] px-5 py-3 text-sm font-semibold text-[#3d2510] hover:bg-white shadow-xl shadow-black/10"
+                onClick={() => {
+                  addToCart(product);
+                  navigate('/');
+                }}
               >
-                <ShoppingBag className="h-4 w-4" />
-                Book this box
+                <Plus className="h-4 w-4" />
+                Add to My Box
               </MotionButton>
               <div className="inline-flex items-center gap-2 text-xs text-[#fbead0]">
                 <ShieldCheck className="h-4 w-4 text-[#f7d7a3]" />

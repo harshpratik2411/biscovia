@@ -30,6 +30,16 @@ router.get('/', async (req, res) => {
 // Get single user by ID
 router.get('/:id', async (req, res) => {
   try {
+    if (!pool) {
+      // Use mock data
+      const user = mockUsers.find(u => u.id == req.params.id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      const { password, ...userWithoutPassword } = user;
+      return res.json(userWithoutPassword);
+    }
+    
     const [rows] = await pool.execute(
       'SELECT id, name, email, role, created_at FROM users WHERE id = ?', 
       [req.params.id]
@@ -57,6 +67,34 @@ router.post('/register', [
     }
 
     const { name, email, password, role = 'user' } = req.body;
+    
+    if (!pool) {
+      // Use mock data
+      const existingUser = mockUsers.find(u => u.email === email);
+      if (existingUser) {
+        return res.status(400).json({ message: 'User with this email already exists' });
+      }
+
+      // Hash password
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      
+      const newUser = {
+        id: mockUsers.length + 1,
+        name,
+        email,
+        password: hashedPassword,
+        role,
+        created_at: new Date().toISOString()
+      };
+      
+      mockUsers.push(newUser);
+      
+      return res.status(201).json({ 
+        message: 'User registered successfully', 
+        id: newUser.id 
+      });
+    }
     
     // Check if user already exists
     const [existingUser] = await pool.execute('SELECT id FROM users WHERE email = ?', [email]);
@@ -176,6 +214,27 @@ router.put('/:id', [
 
     const { name, email, role } = req.body;
     const userId = req.params.id;
+
+    if (!pool) {
+      // Use mock data
+      const userIndex = mockUsers.findIndex(u => u.id == userId);
+      if (userIndex === -1) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      if (email) {
+        const emailCheck = mockUsers.find(u => u.email === email && u.id != userId);
+        if (emailCheck) {
+          return res.status(400).json({ message: 'Email is already taken by another user' });
+        }
+      }
+
+      if (name !== undefined) mockUsers[userIndex].name = name;
+      if (email !== undefined) mockUsers[userIndex].email = email;
+      if (role !== undefined) mockUsers[userIndex].role = role;
+
+      return res.json({ message: 'User updated successfully' });
+    }
 
     // Check if user exists
     const [existingUser] = await pool.execute('SELECT id FROM users WHERE id = ?', [userId]);

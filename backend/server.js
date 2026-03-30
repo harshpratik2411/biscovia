@@ -66,6 +66,7 @@ console.log('Using mock data - frontend will work with sample data');
 app.use('/api/products', require('./routes/products'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/contacts', require('./routes/contacts'));
+app.use('/api/orders', require('./routes/orders'));
 
 // Default route
 app.get('/', (req, res) => {

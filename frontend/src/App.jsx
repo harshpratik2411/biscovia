@@ -1,21 +1,24 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { Cookie, ShoppingBag, User, ShieldCheck, Star } from 'lucide-react'
-import { motion } from 'framer-motion'
-import './App.css'
-import chocolateVideo from './assets/chocolate.mp4'
-import chocolateVideoSecondary from './assets/chocolate1.mp4'
-import img5 from  './assets/cookies/img5.jpg'
-import img7 from  './assets/cookies/img7.jpg'
-import homeCookie1 from './assets/cookies/img1.jpg'
-import homeCookie2 from './assets/cookies/img2.jpg'
-
+import { Cookie, ShoppingBag, User, ShieldCheck, Star, Trash2, Plus, Minus, X, LogOut, LayoutDashboard } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useCart } from './context/CartContext'
+import { useAuth } from './context/AuthContext'
+import './App.css' 
+import chocolate from './assets/chocolate.mp4'
+import chocolateVideoSecondary from './assets/chocolate1.mp4' 
+import img5 from './assets/cookies/img5.jpg'
+import img7 from './assets/cookies/img7.jpg'
 const MotionHeader = motion.header
 const MotionDiv = motion.div
 
 function HomePage() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [isCartOpen, setIsCartOpen] = useState(false)
+  const { cartItems, addToCart, removeFromCart, updateQuantity, getCartTotal } = useCart()
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetchProducts()
@@ -41,9 +44,122 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#f5e4cf] text-[#3d2510]">
+      {/* Cart Drawer */}
+      <AnimatePresence>
+        {isCartOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsCartOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[1000]"
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed right-0 top-0 h-full w-full max-w-md bg-[#f5e4cf] z-[1001] shadow-2xl flex flex-col"
+            >
+              <div className="p-6 bg-[#3d2510] text-[#f5e4cf] flex items-center justify-between shadow-lg">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-[#f5e4cf] text-[#3d2510] flex items-center justify-center">
+                    <ShoppingBag className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold">Your Box</h2>
+                    <p className="text-[11px] text-[#f5e4cf]/60 uppercase tracking-widest font-bold">
+                      {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setIsCartOpen(false)}
+                  className="h-10 w-10 rounded-full hover:bg-[#f5e4cf]/10 flex items-center justify-center transition-colors"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                {cartItems.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
+                    <div className="h-24 w-24 rounded-full bg-[#d3a971]/10 flex items-center justify-center">
+                      <Cookie className="h-12 w-12 text-[#d3a971]/40" />
+                    </div>
+                    <p className="text-lg font-bold text-[#3d2510]/40">Your box is empty</p>
+                    <button 
+                      onClick={() => setIsCartOpen(false)}
+                      className="bg-[#3d2510] text-[#f5e4cf] px-8 py-3 rounded-full font-bold text-sm"
+                    >
+                      Start Adding
+                    </button>
+                  </div>
+                ) : (
+                  cartItems.map(item => (
+                    <motion.div 
+                      layout
+                      key={item.id} 
+                      className="flex gap-4 bg-[#f9e7cf] p-4 rounded-3xl shadow-sm border border-[#d3a971]/10"
+                    >
+                      <div className="h-24 w-24 rounded-2xl overflow-hidden bg-[#3d2510]/5 flex-shrink-0">
+                        <img src={getImageUrl(item.image_url)} alt={item.name} className="h-full w-full object-cover" />
+                      </div>
+                      <div className="flex-1 flex flex-col justify-between py-1">
+                        <div>
+                          <div className="flex justify-between items-start">
+                            <h3 className="font-bold text-sm leading-tight">{item.name}</h3>
+                            <button onClick={() => removeFromCart(item.id)} className="text-red-500 hover:bg-red-50 p-1 rounded-lg">
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                          <p className="text-xs font-bold text-[#c0633a] mt-1">₹{item.price}</p>
+                        </div>
+                        <div className="flex items-center justify-between mt-3">
+                          <div className="flex items-center gap-3 bg-[#f5e4cf] px-3 py-1.5 rounded-xl border border-[#d3a971]/20">
+                            <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="text-[#3d2510]/60 hover:text-[#3d2510]">
+                              <Minus className="h-3 w-3" />
+                            </button>
+                            <span className="text-sm font-bold w-4 text-center">{item.quantity}</span>
+                            <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="text-[#3d2510]/60 hover:text-[#3d2510]">
+                              <Plus className="h-3 w-3" />
+                            </button>
+                          </div>
+                          <p className="font-bold text-sm">₹{item.price * item.quantity}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))
+                )}
+              </div>
+
+              {cartItems.length > 0 && (
+                <div className="p-8 bg-[#f9e7cf] border-t border-[#d3a971]/20 space-y-6">
+                  <div className="flex justify-between items-end">
+                    <span className="text-[#3d2510]/60 font-bold text-sm uppercase tracking-wider">Total Amount</span>
+                    <span className="text-3xl font-bold text-[#3d2510]">₹{getCartTotal()}</span>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      setIsCartOpen(false);
+                      navigate('/checkout');
+                    }}
+                    className="w-full bg-[#3d2510] text-[#f5e4cf] py-4 rounded-2xl font-bold text-lg shadow-xl shadow-[#3d2510]/20 hover:bg-[#2b180b] transition-all active:scale-[0.98] flex items-center justify-center gap-3"
+                  >
+                    Proceed to Checkout
+                    <ShoppingBag className="h-5 w-5" />
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       <section className="relative h-screen w-full overflow-hidden">
         <video
-          src={chocolateVideo}
+          src={chocolate}
           autoPlay
           loop
           muted
@@ -62,28 +178,54 @@ function HomePage() {
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f5e4cf] text-[#3d2510]">
                 <Cookie className="h-5 w-5" />
               </div>
-              <div>
+              <Link to="/" className="flex flex-col">
                 <p className="text-lg font-semibold tracking-[0.18em]">Biskovia</p>
-                <p className="text-xs text-[#fbead0]">Craving Cookies? We&apos;ve Got the Crumble!</p>
-              </div>
+                <p className="text-[10px] text-[#fbead0] uppercase tracking-[0.2em] font-medium opacity-80">Studio</p>
+              </Link>
             </div>
-            <nav className="hidden items-center gap-8 text-sm font-semibold text-[#fbead0] md:flex">
-              <Link to="/" className="border-b border-[#fbead0] pb-1">
-                Home
-              </Link>
-              <Link to="/menu" className="pb-1 hover:border-b hover:border-[#fbead0]">
-                Menu
-              </Link>
-              <Link to="/about" className="pb-1 hover:border-b hover:border-[#fbead0]">
-                About
-              </Link>
-              <Link to="/contact" className="pb-1 hover:border-b hover:border-[#fbead0]">
-                Contact
-              </Link>
+            <nav className="hidden items-center gap-10 text-xs font-bold uppercase tracking-widest text-[#fbead0] md:flex">
+              <Link to="/" className="hover:text-[#f7d7a3] transition-colors border-b-2 border-[#f7d7a3] pb-1">Home</Link>
+              <Link to="/menu" className="hover:text-[#f7d7a3] transition-colors pb-1">Menu</Link>
+              <Link to="/about" className="hover:text-[#f7d7a3] transition-colors pb-1">About</Link>
+              <Link to="/contact" className="hover:text-[#f7d7a3] transition-colors pb-1">Contact</Link>
             </nav>
-            <div className="flex items-center gap-4 text-[#fbead0]">
-              <User className="h-5 w-5" />
-              <ShoppingBag className="h-5 w-5" />
+            <div className="flex items-center gap-6">
+              {user ? (
+                <div className="flex items-center gap-4">
+                  <div className="flex flex-col items-end">
+                    <span className="text-[10px] font-bold text-[#f7d7a3] uppercase tracking-wider">Hey, Hey, {user?.name?.split(' ')[0] || 'User'}</span>
+                    <div className="flex gap-3">
+                      {user.role === 'admin' && (
+                        <Link to="/admin" className="text-[#fbead0] hover:text-white transition-colors">
+                          <LayoutDashboard className="h-4 w-4" />
+                        </Link>
+                      )}
+                      <button onClick={logout} className="text-[#fbead0] hover:text-red-400 transition-colors">
+                        <LogOut className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="h-8 w-8 rounded-full bg-[#f7d7a3] text-[#3d2510] flex items-center justify-center font-bold text-xs">
+                   {user?.name?.charAt(0) || 'U'}
+                  </div>
+                </div>
+              ) : (
+                <Link to="/login" className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#fbead0] hover:text-white bg-white/10 px-4 py-2 rounded-full backdrop-blur-md">
+                  <User className="h-4 w-4" />
+                  Login
+                </Link>
+              )}
+              <button 
+                onClick={() => setIsCartOpen(true)}
+                className="relative h-10 w-10 flex items-center justify-center rounded-full bg-[#f5e4cf] text-[#3d2510] hover:bg-white transition-all shadow-xl shadow-black/20"
+              >
+                <ShoppingBag className="h-5 w-5" />
+                {cartItems.length > 0 && (
+                  <span className="absolute -top-1 -right-1 h-5 w-5 bg-[#c0633a] text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-[#3d2510]">
+                    {cartItems.length}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
         </MotionHeader>
@@ -219,10 +361,17 @@ function HomePage() {
                             <p className="text-[11px] text-[#b38854] line-through">₹{originalPrice}</p>
                           )}
                         </div>
-                        <span className="inline-flex items-center gap-1 rounded-full bg-[#f5e4cf] px-3 py-1 text-[11px] font-semibold text-[#3d2510]">
-                          <ShieldCheck className="h-3 w-3" />
-                          Bestseller
-                        </span>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            addToCart(product);
+                            setIsCartOpen(true);
+                          }}
+                          className="inline-flex items-center gap-1 rounded-full bg-[#3d2510] px-3 py-2 text-[10px] font-bold text-[#f5e4cf] hover:bg-[#2b180b] transition-all"
+                        >
+                          <Plus className="h-3 w-3" />
+                          ADD
+                        </button>
                       </div>
                     </div>
                   </Link>
@@ -292,14 +441,14 @@ function HomePage() {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="relative h-28 overflow-hidden rounded-3xl">
                       <img
-                        src={homeCookie1}
+                        src={img5}
                         alt="Cookie closeup"
                         className="h-full w-full object-cover"
                       />
                     </div>
                     <div className="relative h-28 overflow-hidden rounded-3xl">
                       <img
-                        src={homeCookie2}
+                        src={img7}
                         alt="Biscuit stack"
                         className="h-full w-full object-cover"
                       />
@@ -346,7 +495,7 @@ function HomePage() {
           <div className="flex items-center justify-center">
             <div className="relative w-full max-w-sm overflow-hidden rounded-[1rem] bg-[#2b180b]">
               <img
-                src={img7}
+                src={img5}
                 alt="Cookie box illustration"
                 className="absolute inset-0 h-full w-full object-cover opacity-80"
               />
