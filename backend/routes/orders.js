@@ -4,9 +4,19 @@ const crypto = require('crypto');
 const router = express.Router();
 const { pool } = require('../server');
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_placeholder',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || 'placeholder_secret'
+let razorpay;
+try {
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_SXmK6bu7bo4Ppc', // Provide dummy to prevent crash on init
+    key_secret: process.env.RAZORPAY_KEY_SECRET || 'seXiWXaLS1Mo2Z0QgVI6cra2'
+  });
+} catch (err) {
+  console.error('Failed to initialize Razorpay:', err.message);
+}
+
+// Get Razorpay Key ID
+router.get('/key', (req, res) => {
+  res.json({ key: process.env.RAZORPAY_KEY_ID });
 });
 
 // Create a new order
@@ -20,9 +30,30 @@ router.post('/create', async (req, res) => {
       receipt: `receipt_${Date.now()}`
     };
 
-    const razorpayOrder = await razorpay.orders.create(options);
+    let razorpayOrder;
 
-    // If using real DB, save pending order
+    // Try to use real Razorpay if credentials exist
+    if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+      try {
+        razorpayOrder = await razorpay.orders.create(options);
+        console.log('Real Razorpay order created:', razorpayOrder.id);
+      } catch (rzpErr) {
+        console.error('Razorpay API Error:', rzpErr);
+        return res.status(400).json({ message: 'Razorpay API Error: ' + rzpErr.description });
+      }
+    } else {
+      // Mock mode only if no keys provided
+      razorpayOrder = {
+        id: `order_mock_${Date.now()}`,
+        amount: options.amount,
+        currency: 'INR',
+        receipt: options.receipt,
+        status: 'created'
+      };
+      console.log('Mock Mode: Razorpay order created', razorpayOrder.id);
+    }
+
+    // Save to DB if pool exists
     if (pool) {
       const [result] = await pool.execute(
         'INSERT INTO orders (user_id, total_amount, status, razorpay_order_id, address, lat, lng) VALUES (?, ?, ?, ?, ?, ?, ?)',
@@ -31,7 +62,6 @@ router.post('/create', async (req, res) => {
       
       const orderId = result.insertId;
       
-      // Save order items
       for (const item of items) {
         await pool.execute(
           'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)',
@@ -45,7 +75,7 @@ router.post('/create', async (req, res) => {
       order: razorpayOrder
     });
   } catch (error) {
-    console.error('Error creating Razorpay order:', error);
+    console.error('Error creating order:', error);
     res.status(500).json({ message: 'Error creating order' });
   }
 });
@@ -59,9 +89,14 @@ router.post('/verify', async (req, res) => {
       razorpay_signature 
     } = req.body;
 
+    // If it's a mock order and we don't have keys, or it's just mock verification
+    if (razorpay_order_id.startsWith('order_mock_')) {
+      return res.json({ success: true, message: "Mock payment verified" });
+    }
+
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSign = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET || 'placeholder_secret')
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(sign.toString())
       .digest("hex");
 

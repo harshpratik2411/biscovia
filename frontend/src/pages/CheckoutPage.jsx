@@ -37,6 +37,21 @@ function CheckoutPage() {
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const [razorpayKey, setRazorpayKey] = useState('');
+
+  useEffect(() => {
+    fetchRazorpayKey();
+  }, []);
+
+  const fetchRazorpayKey = async () => {
+    try {
+      const response = await fetch('http://localhost:5001/api/orders/key');
+      const data = await response.json();
+      setRazorpayKey(data.key);
+    } catch (error) {
+      console.error('Error fetching Razorpay key:', error);
+    }
+  };
 
   useEffect(() => {
     if (!user) {
@@ -74,9 +89,9 @@ function CheckoutPage() {
 
       if (!data.success) throw new Error('Failed to create order');
 
-      // 2. Initialize Razorpay
+      // Initialize real Razorpay
       const options = {
-        key: 'rzp_test_placeholder', // Use your actual key in production
+        key: razorpayKey, 
         amount: data.order.amount,
         currency: 'INR',
         name: 'Biskovia',
@@ -104,10 +119,21 @@ function CheckoutPage() {
         },
         theme: {
           color: '#3d2510'
+        },
+        modal: {
+          ondismiss: function() {
+            setLoading(false);
+          }
         }
       };
 
       const rzp = new window.Razorpay(options);
+      
+      rzp.on('payment.failed', function (response) {
+        setLoading(false);
+        alert(`Payment Failed: ${response.error.description}`);
+      });
+
       rzp.open();
     } catch (error) {
       console.error('Checkout error:', error);
