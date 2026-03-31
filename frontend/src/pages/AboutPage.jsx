@@ -134,11 +134,6 @@ function AboutPage() {
         </section>
 
       </main>
-
-      {/* FOOTER */}
-      <footer className="bg-[#3d2510] text-[#f5e4cf] text-center py-6 text-xs">
-        © {new Date().getFullYear()} Biskovia. Crafted with care.
-      </footer>
     </div>
   )
 }

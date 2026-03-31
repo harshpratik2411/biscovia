@@ -14,24 +14,27 @@ import LoginPage from './pages/LoginPage.jsx'
 import CheckoutPage from './pages/CheckoutPage.jsx'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
+import Layout from './components/Layout'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
       <CartProvider>
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/menu" element={<MenuPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/products/:slug" element={<ProductDetailPage />} />
-            <Route path="/booking" element={<BookingPage />} />
-            <Route path="/admin" element={<AdminPage />} />
-            <Route path="/admin/add-product" element={<AddProductPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
-          </Routes>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/menu" element={<MenuPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/products/:slug" element={<ProductDetailPage />} />
+              <Route path="/booking" element={<BookingPage />} />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/admin/add-product" element={<AddProductPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+            </Routes>
+          </Layout>
         </BrowserRouter>
       </CartProvider>
     </AuthProvider>
